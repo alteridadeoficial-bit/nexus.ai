@@ -1,0 +1,2844 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NEXUS.AI // Portal de Notícias</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================================================
+   BASE
+========================================================= */
+
+:root {
+    --neon: #2dd4ee;
+    --neon2: #b07dfa;
+    --neon3: #ff6b9d;
+
+    --bg: #05070d;
+    --panel: rgba(12, 18, 36, 0.72);
+    --panel2: rgba(17, 24, 48, 0.82);
+
+    --border: rgba(72, 94, 145, 0.28);
+
+    --text: #e2eaff;
+    --muted: #8ba0c9;
+
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+
+    --depth-x: 0px;
+    --depth-y: 0px;
+
+    --scroll-depth: 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 50% 30%,
+            rgba(45, 212, 238, 0.05),
+            transparent 35%
+        ),
+        var(--bg);
+
+    color: var(--text);
+
+    font-family: "Inter", sans-serif;
+
+    overflow-x: hidden;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+/* =========================================================
+   UNIVERSO
+========================================================= */
+
+.universe {
+    position: fixed;
+    inset: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    background:
+        radial-gradient(
+            circle at var(--mouse-x) var(--mouse-y),
+            rgba(45, 212, 238, 0.08),
+            transparent 20%
+        ),
+        radial-gradient(
+            circle at 80% 20%,
+            rgba(176, 125, 250, 0.08),
+            transparent 30%
+        );
+}
+
+/* =========================================================
+   CANVAS NEURAL
+========================================================= */
+
+#neuralCanvas {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0.9;
+
+    filter: blur(0.15px);
+
+    transform:
+        translate3d(
+            calc(var(--depth-x) * 0.18),
+            calc(var(--depth-y) * 0.18),
+            0
+        );
+
+    transition: transform 0.3s ease-out;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.surface-grid {
+    position: absolute;
+
+    inset: -50%;
+
+    background-image:
+        linear-gradient(
+            rgba(45, 212, 238, 0.045) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(45, 212, 238, 0.045) 1px,
+            transparent 1px
+        );
+
+    background-size: 70px 70px;
+
+    transform:
+        perspective(900px)
+        rotateX(68deg)
+        translateY(
+            calc(var(--scroll-depth) * 0.15px)
+        );
+
+    transform-origin: center bottom;
+
+    opacity: 0.45;
+
+    mask-image:
+        radial-gradient(
+            ellipse at center,
+            black 10%,
+            transparent 75%
+        );
+}
+
+/* =========================================================
+   DIMENSÃO ESCONDIDA
+========================================================= */
+
+.hidden-dimension {
+
+    position: absolute;
+
+    inset: -10%;
+
+    background:
+
+        radial-gradient(
+            circle at 30% 40%,
+            rgba(255, 107, 157, 0.24),
+            transparent 25%
+        ),
+
+        radial-gradient(
+            circle at 70% 60%,
+            rgba(176, 125, 250, 0.28),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(45, 212, 238, 0.16),
+            transparent 40%
+        ),
+
+        linear-gradient(
+            120deg,
+            #10091d,
+            #061c29,
+            #140b25
+        );
+
+    transform:
+        translate3d(
+            calc(var(--depth-x) * -0.25),
+            calc(var(--depth-y) * -0.25),
+            0
+        )
+        scale(1.08);
+
+    opacity: 0.8;
+
+    /*
+       O cursor abre uma janela para esta dimensão.
+    */
+
+    mask-image:
+        radial-gradient(
+            circle 150px at var(--mouse-x) var(--mouse-y),
+            black 0%,
+            rgba(0,0,0,0.8) 30%,
+            transparent 72%
+        );
+
+    -webkit-mask-image:
+        radial-gradient(
+            circle 150px at var(--mouse-x) var(--mouse-y),
+            black 0%,
+            rgba(0,0,0,0.8) 30%,
+            transparent 72%
+        );
+}
+
+/* =========================================================
+   PORTAL
+========================================================= */
+
+.portal-light {
+
+    position: absolute;
+
+    width: 420px;
+    height: 420px;
+
+    left: var(--mouse-x);
+    top: var(--mouse-y);
+
+    transform:
+        translate(-50%, -50%)
+        translate3d(
+            calc(var(--depth-x) * 0.15),
+            calc(var(--depth-y) * 0.15),
+            0
+        );
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(45, 212, 238, 0.13),
+            rgba(176, 125, 250, 0.06) 35%,
+            transparent 70%
+        );
+
+    filter: blur(15px);
+
+    mix-blend-mode: screen;
+
+    transition:
+        left 0.15s linear,
+        top 0.15s linear;
+}
+
+/* =========================================================
+   PARTÍCULAS DISTANTES
+========================================================= */
+
+.distant {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    background: rgba(45, 212, 238, 0.5);
+
+    box-shadow:
+        0 0 15px rgba(45, 212, 238, 0.3);
+
+    animation:
+        float 12s ease-in-out infinite;
+}
+
+.distant:nth-child(1) {
+    width: 3px;
+    height: 3px;
+    left: 15%;
+    top: 25%;
+}
+
+.distant:nth-child(2) {
+    width: 2px;
+    height: 2px;
+    left: 80%;
+    top: 30%;
+    animation-delay: -4s;
+}
+
+.distant:nth-child(3) {
+    width: 4px;
+    height: 4px;
+    left: 68%;
+    top: 75%;
+    animation-delay: -7s;
+}
+
+.distant:nth-child(4) {
+    width: 2px;
+    height: 2px;
+    left: 25%;
+    top: 80%;
+    animation-delay: -2s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    50% {
+        transform: translate3d(25px, -30px, 0);
+    }
+}
+
+/* =========================================================
+   VIGNETTE
+========================================================= */
+
+.vignette {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 35%,
+            rgba(0,0,0,0.35) 75%,
+            rgba(0,0,0,0.8) 100%
+        );
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.content {
+
+    position: relative;
+
+    z-index: 10;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 100;
+
+    height: 74px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 6vw;
+
+    background:
+        rgba(5, 7, 13, 0.62);
+
+    backdrop-filter: blur(18px);
+
+    border-bottom:
+        1px solid rgba(45, 212, 238, 0.08);
+}
+
+.logo {
+
+    font-family: "Space Grotesk", sans-serif;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+
+    color: white;
+}
+
+.logo span {
+
+    color: var(--neon);
+
+    text-shadow:
+        0 0 18px rgba(45, 212, 238, 0.6);
+}
+
+nav {
+
+    display: flex;
+
+    gap: 28px;
+}
+
+nav a {
+
+    color: var(--muted);
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    transition: 0.25s;
+}
+
+nav a:hover {
+
+    color: var(--neon);
+
+    text-shadow:
+        0 0 12px rgba(45, 212, 238, 0.5);
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-bar {
+
+    position: fixed;
+
+    top: 74px;
+    left: 0;
+    right: 0;
+
+    z-index: 90;
+
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    background:
+        rgba(5,7,13,0.5);
+
+    backdrop-filter: blur(10px);
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.03);
+
+    color: #6f85ad;
+
+    font-family:
+        "JetBrains Mono",
+        monospace;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+}
+
+.status-dot {
+
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: var(--neon);
+
+    box-shadow:
+        0 0 10px var(--neon);
+
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding:
+        120px 20px 80px;
+
+    position: relative;
+}
+
+.hero-inner {
+
+    max-width: 1000px;
+
+    transform:
+        translate3d(
+            calc(var(--depth-x) * 0.04),
+            calc(var(--depth-y) * 0.04),
+            0
+        );
+
+    transition:
+        transform 0.4s ease-out;
+}
+
+.eyebrow {
+
+    display: inline-block;
+
+    margin-bottom: 24px;
+
+    font-family:
+        "JetBrains Mono",
+        monospace;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+
+    color: var(--neon);
+
+    text-shadow:
+        0 0 15px rgba(45,212,238,0.6);
+}
+
+.hero h1 {
+
+    font-family:
+        "Space Grotesk",
+        sans-serif;
+
+    font-size:
+        clamp(64px, 12vw, 150px);
+
+    line-height: 0.85;
+
+    letter-spacing: -7px;
+
+    margin-bottom: 32px;
+
+    background:
+        linear-gradient(
+            120deg,
+            #ffffff,
+            #b9f5ff,
+            #a875ff,
+            #ffffff
+        );
+
+    background-size: 250%;
+
+    -webkit-background-clip: text;
+
+    background-clip: text;
+
+    color: transparent;
+
+    animation:
+        titleFlow 8s ease infinite;
+
+    filter:
+        drop-shadow(
+            0 0 25px rgba(45,212,238,0.12)
+        );
+}
+
+@keyframes titleFlow {
+
+    0% {
+        background-position: 0%;
+    }
+
+    50% {
+        background-position: 100%;
+    }
+
+    100% {
+        background-position: 0%;
+    }
+}
+
+.hero p {
+
+    max-width: 650px;
+
+    margin: auto;
+
+    color: var(--muted);
+
+    font-size: 16px;
+
+    line-height: 1.8;
+}
+
+.enter {
+
+    display: inline-flex;
+
+    margin-top: 40px;
+
+    padding: 14px 25px;
+
+    border:
+        1px solid rgba(45,212,238,0.35);
+
+    border-radius: 999px;
+
+    color: var(--neon);
+
+    text-decoration: none;
+
+    font-family:
+        "JetBrains Mono",
+        monospace;
+
+    font-size: 11px;
+
+    letter-spacing: 2px;
+
+    background:
+        rgba(45,212,238,0.04);
+
+    transition: 0.3s;
+}
+
+.enter:hover {
+
+    background:
+        rgba(45,212,238,0.12);
+
+    box-shadow:
+        0 0 30px rgba(45,212,238,0.16);
+
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   SEÇÕES
+========================================================= */
+
+.section {
+
+    width: min(1200px, 90%);
+
+    margin: auto;
+
+    padding: 120px 0;
+}
+
+.section-label {
+
+    font-family:
+        "JetBrains Mono",
+        monospace;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    color: var(--neon);
+
+    margin-bottom: 15px;
+}
+
+.section-title {
+
+    font-family:
+        "Space Grotesk",
+        sans-serif;
+
+    font-size:
+        clamp(35px, 5vw, 60px);
+
+    letter-spacing: -2px;
+
+    margin-bottom: 50px;
+}
+
+/* =========================================================
+   FEATURE
+========================================================= */
+
+.feature {
+
+    display: grid;
+
+    grid-template-columns:
+        1.5fr 1fr;
+
+    min-height: 430px;
+
+    border:
+        1px solid var(--border);
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(17,24,48,0.75),
+            rgba(8,13,27,0.6)
+        );
+
+    backdrop-filter: blur(15px);
+
+    overflow: hidden;
+
+    border-radius: 22px;
+
+    transition:
+        transform 0.4s,
+        border-color 0.4s;
+}
+
+.feature:hover {
+
+    transform:
+        translateY(-6px);
+
+    border-color:
+        rgba(45,212,238,0.4);
+}
+
+.feature-image {
+
+    position: relative;
+
+    min-height: 400px;
+
+    background:
+
+        radial-gradient(
+            circle at 40% 40%,
+            rgba(45,212,238,0.22),
+            transparent 25%
+        ),
+
+        radial-gradient(
+            circle at 70% 70%,
+            rgba(176,125,250,0.22),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #071421,
+            #11102a
+        );
+}
+
+.feature-image::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+
+        repeating-linear-gradient(
+            45deg,
+            transparent 0,
+            transparent 12px,
+            rgba(45,212,238,0.025) 13px
+        );
+}
+
+.feature-content {
+
+    padding: 50px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+.tag {
+
+    display: inline-block;
+
+    width: fit-content;
+
+    padding: 6px 10px;
+
+    margin-bottom: 20px;
+
+    border:
+        1px solid rgba(45,212,238,0.25);
+
+    border-radius: 4px;
+
+    color: var(--neon);
+
+    font-family:
+        "JetBrains Mono",
+        monospace;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+}
+
+.feature h3 {
+
+    font-family:
+        "Space Grotesk",
+        sans-serif;
+
+    font-size: 34px;
+
+    line-height: 1.1;
+
+    margin-bottom: 20px;
+}
+
+.feature p {
+
+    color: var(--muted);
+
+    line-height: 1.7;
+
+    font-size: 14px;
+}
+
+/* =========================================================
+   NOTÍCIAS
+========================================================= */
+
+.news-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 22px;
+}
+
+.card {
+
+    position: relative;
+
+    min-height: 320px;
+
+    padding: 28px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-end;
+
+    overflow: hidden;
+
+    border-radius: 16px;
+
+    border:
+        1px solid var(--border);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17,24,48,0.82),
+            rgba(5,8,18,0.82)
+        );
+
+    backdrop-filter: blur(10px);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.35s,
+        border-color 0.35s,
+        box-shadow 0.35s;
+}
+
+.card::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(45,212,238,0.12),
+            transparent 50%
+        );
+
+    opacity: 0;
+
+    transition: 0.35s;
+}
+
+.card:hover {
+
+    transform:
+        translateY(-8px);
+
+    border-color:
+        rgba(45,212,238,0.4);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.35);
+}
+
+.card:hover::before {
+
+    opacity: 1;
+}
+
+.card > * {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+.card h3 {
+
+    font-family:
+        "Space Grotesk",
+        sans-serif;
+
+    font-size: 22px;
+
+    line-height: 1.2;
+
+    margin-bottom: 12px;
+}
+
+.card p {
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+.meta {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 20px;
+
+    color: #667ca5;
+
+    font-family:
+        "JetBrains Mono",
+        monospace;
+
+    font-size: 9px;
+}
+
+/* =========================================================
+   CATEGORIAS
+========================================================= */
+
+.categories {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+.category {
+
+    padding:
+        10px 16px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 999px;
+
+    background:
+        rgba(255,255,255,0.02);
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition: 0.25s;
+}
+
+.category:hover,
+.category.active {
+
+    color: var(--neon);
+
+    border-color:
+        rgba(45,212,238,0.35);
+
+    background:
+        rgba(45,212,238,0.06);
+}
+
+/* =========================================================
+   CURIOSIDADES
+========================================================= */
+
+.curiosity {
+
+    padding: 50px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(176,125,250,0.07),
+            rgba(45,212,238,0.04)
+        );
+
+    text-align: center;
+}
+
+.curiosity h3 {
+
+    font-family:
+        "Space Grotesk",
+        sans-serif;
+
+    font-size: 26px;
+
+    margin-bottom: 15px;
+}
+
+.curiosity p {
+
+    color: var(--muted);
+
+    max-width: 700px;
+
+    margin: auto;
+
+    line-height: 1.8;
+}
+
+/* =========================================================
+   NEWSLETTER
+========================================================= */
+
+.newsletter {
+
+    padding: 70px 40px;
+
+    text-align: center;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 22px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(45,212,238,0.08),
+            transparent 60%
+        );
+}
+
+.newsletter h2 {
+
+    font-family:
+        "Space Grotesk",
+        sans-serif;
+
+    font-size: 42px;
+
+    margin-bottom: 15px;
+}
+
+.newsletter p {
+
+    color: var(--muted);
+
+    margin-bottom: 30px;
+}
+
+.newsletter-form {
+
+    display: flex;
+
+    max-width: 520px;
+
+    margin: auto;
+}
+
+.newsletter-form input {
+
+    flex: 1;
+
+    padding:
+        15px 18px;
+
+    border:
+        1px solid var(--border);
+
+    border-right: none;
+
+    background:
+        rgba(0,0,0,0.25);
+
+    color: white;
+
+    outline: none;
+
+    border-radius:
+        8px 0 0 8px;
+}
+
+.newsletter-form button {
+
+    padding:
+        0 25px;
+
+    border: none;
+
+    background:
+        var(--neon);
+
+    color:
+        #031018;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    border-radius:
+        0 8px 8px 0;
+}
+
+/* =========================================================
+   ABOUT
+========================================================= */
+
+.about {
+
+    max-width: 800px;
+}
+
+.about p {
+
+    color: var(--muted);
+
+    line-height: 1.9;
+
+    margin-bottom: 20px;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+
+    padding:
+        50px 6vw;
+
+    border-top:
+        1px solid var(--border);
+
+    color: #53678d;
+
+    font-family:
+        "JetBrains Mono",
+        monospace;
+
+    font-size: 10px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 500;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(0,0,0,0.72);
+
+    backdrop-filter:
+        blur(15px);
+}
+
+.modal.open {
+
+    display: flex;
+}
+
+.modal-box {
+
+    width: min(800px, 100%);
+
+    max-height: 85vh;
+
+    overflow-y: auto;
+
+    padding: 45px;
+
+    border:
+        1px solid rgba(45,212,238,0.25);
+
+    border-radius: 20px;
+
+    background:
+        rgba(8,13,27,0.95);
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,0.6);
+}
+
+.modal-close {
+
+    float: right;
+
+    border: none;
+
+    background: none;
+
+    color: var(--muted);
+
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+.modal-box h2 {
+
+    font-family:
+        "Space Grotesk",
+        sans-serif;
+
+    font-size: 38px;
+
+    margin:
+        20px 0;
+}
+
+.modal-box p {
+
+    color: var(--muted);
+
+    line-height: 1.9;
+
+    margin-bottom: 20px;
+}
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media (max-width: 850px) {
+
+    nav {
+        display: none;
+    }
+
+    .feature {
+
+        grid-template-columns: 1fr;
+    }
+
+    .feature-image {
+
+        min-height: 260px;
+    }
+
+    .news-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .newsletter-form {
+
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+    .newsletter-form input {
+
+        border-right:
+            1px solid var(--border);
+
+        border-radius: 8px;
+    }
+
+    .newsletter-form button {
+
+        padding: 14px;
+
+        border-radius: 8px;
+    }
+
+    footer {
+
+        flex-direction: column;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     UNIVERSO / FUNDO
+===================================================== -->
+
+<div class="universe">
+
+    <canvas id="neuralCanvas"></canvas>
+
+    <div class="hidden-dimension"></div>
+
+    <div class="surface-grid"></div>
+
+    <div class="portal-light"></div>
+
+    <div class="distant"></div>
+    <div class="distant"></div>
+    <div class="distant"></div>
+    <div class="distant"></div>
+
+    <div class="vignette"></div>
+
+</div>
+
+
+<!-- =====================================================
+     CONTEÚDO
+===================================================== -->
+
+<div class="content">
+
+<header>
+
+    <div class="logo">
+        NEXUS<span>.AI</span>
+    </div>
+
+    <nav>
+
+        <a href="#inicio">
+            INÍCIO
+        </a>
+
+        <a href="#noticias">
+            NOTÍCIAS
+        </a>
+
+        <a href="#categorias">
+            CATEGORIAS
+        </a>
+
+        <a href="#sobre">
+            SOBRE
+        </a>
+
+    </nav>
+
+</header>
+
+
+<div class="status-bar">
+
+    <span class="status-dot"></span>
+
+    NEXUS NETWORK // NEURAL SYSTEM ONLINE
+
+</div>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero" id="inicio">
+
+    <div class="hero-inner">
+
+        <div class="eyebrow">
+            BEYOND THE SURFACE
+        </div>
+
+        <h1>
+            NEXUS
+        </h1>
+
+        <p>
+            Um portal experimental de notícias sobre inteligência artificial,
+            tecnologia e as transformações que estão acontecendo
+            além da superfície.
+        </p>
+
+        <a
+            href="#noticias"
+            class="enter"
+        >
+            ENTER THE NEXUS →
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FEATURE
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-label">
+        01 // SIGNAL
+    </div>
+
+    <div class="section-title">
+        O que está<br>
+        acontecendo?
+    </div>
+
+
+    <article class="feature">
+
+        <div class="feature-image"></div>
+
+        <div class="feature-content">
+
+            <span class="tag">
+                INTELIGÊNCIA ARTIFICIAL
+            </span>
+
+            <h3>
+                A próxima interface talvez não seja uma tela.
+            </h3>
+
+            <p>
+                A evolução da inteligência artificial está mudando
+                a forma como humanos interagem com computadores.
+                Interfaces tradicionais começam a dar lugar
+                a sistemas capazes de compreender contexto,
+                intenção e comportamento.
+            </p>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+<!-- =====================================================
+     NOTÍCIAS
+===================================================== -->
+
+<section
+    class="section"
+    id="noticias"
+>
+
+    <div class="section-label">
+        02 // TRANSMISSIONS
+    </div>
+
+    <div class="section-title">
+        Últimas<br>
+        transmissões
+    </div>
+
+
+    <div class="news-grid">
+
+        <article
+            class="card"
+            data-title="Modelos de IA estão ficando menores"
+            data-text="Novas arquiteturas estão permitindo que modelos de inteligência artificial executem tarefas complexas utilizando menos recursos computacionais."
+        >
+
+            <span class="tag">
+                IA
+            </span>
+
+            <h3>
+                Modelos de IA estão ficando menores.
+            </h3>
+
+            <p>
+                Eficiência computacional pode mudar
+                completamente onde a inteligência artificial
+                será executada.
+            </p>
+
+            <div class="meta">
+
+                <span>
+                    21.09.2026
+                </span>
+
+                <span>
+                    04 MIN
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <article
+            class="card"
+            data-title="A corrida pelos agentes autônomos"
+            data-text="Sistemas capazes de planejar e executar tarefas estão se tornando uma das áreas mais exploradas da inteligência artificial."
+        >
+
+            <span class="tag">
+                AGENTS
+            </span>
+
+            <h3>
+                A corrida pelos agentes autônomos.
+            </h3>
+
+            <p>
+                A próxima geração de IA pode deixar
+                de apenas responder e começar
+                a executar.
+            </p>
+
+            <div class="meta">
+
+                <span>
+                    20.09.2026
+                </span>
+
+                <span>
+                    05 MIN
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <article
+            class="card"
+            data-title="Quando máquinas começam a criar"
+            data-text="Ferramentas generativas estão ultrapassando a simples produção de conteúdo e entrando em processos criativos cada vez mais complexos."
+        >
+
+            <span class="tag">
+                CREATIVE AI
+            </span>
+
+            <h3>
+                Quando máquinas começam a criar.
+            </h3>
+
+            <p>
+                A fronteira entre ferramenta e
+                colaborador criativo começa a ficar
+                cada vez menos definida.
+            </p>
+
+            <div class="meta">
+
+                <span>
+                    19.09.2026
+                </span>
+
+                <span>
+                    06 MIN
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <article
+            class="card"
+            data-title="O computador que aprende observando"
+            data-text="Sistemas multimodais conseguem interpretar imagens, sons e textos simultaneamente."
+        >
+
+            <span class="tag">
+                MULTIMODAL
+            </span>
+
+            <h3>
+                O computador que aprende observando.
+            </h3>
+
+            <p>
+                Texto, imagem, áudio e vídeo
+                começam a ser interpretados
+                dentro do mesmo sistema.
+            </p>
+
+            <div class="meta">
+
+                <span>
+                    18.09.2026
+                </span>
+
+                <span>
+                    03 MIN
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <article
+            class="card"
+            data-title="A nova guerra dos chips"
+            data-text="A demanda por processamento especializado está transformando a indústria global de semicondutores."
+        >
+
+            <span class="tag">
+                HARDWARE
+            </span>
+
+            <h3>
+                A nova guerra dos chips.
+            </h3>
+
+            <p>
+                A inteligência artificial também está
+                redefinindo a disputa pelo hardware.
+            </p>
+
+            <div class="meta">
+
+                <span>
+                    17.09.2026
+                </span>
+
+                <span>
+                    07 MIN
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <article
+            class="card"
+            data-title="A internet depois da IA"
+            data-text="A quantidade de conteúdo sintético na internet está aumentando e pode alterar a forma como informação é descoberta."
+        >
+
+            <span class="tag">
+                INTERNET
+            </span>
+
+            <h3>
+                A internet depois da IA.
+            </h3>
+
+            <p>
+                O que acontece quando uma parte
+                crescente da informação online
+                passa a ser produzida por máquinas?
+            </p>
+
+            <div class="meta">
+
+                <span>
+                    16.09.2026
+                </span>
+
+                <span>
+                    08 MIN
+                </span>
+
+            </div>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CATEGORIAS
+===================================================== -->
+
+<section
+    class="section"
+    id="categorias"
+>
+
+    <div class="section-label">
+        03 // CHANNELS
+    </div>
+
+    <div class="section-title">
+        Explore os<br>
+        canais.
+    </div>
+
+
+    <div class="categories">
+
+        <div class="category active">
+            TODAS
+        </div>
+
+        <div class="category">
+            INTELIGÊNCIA ARTIFICIAL
+        </div>
+
+        <div class="category">
+            ROBÓTICA
+        </div>
+
+        <div class="category">
+            AGENTES
+        </div>
+
+        <div class="category">
+            HARDWARE
+        </div>
+
+        <div class="category">
+            FUTURO
+        </div>
+
+        <div class="category">
+            CIÊNCIA
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CURIOSIDADE
+===================================================== -->
+
+<section class="section">
+
+    <div class="curiosity">
+
+        <div class="section-label">
+            NEXUS // CURIOSITY
+        </div>
+
+        <h3>
+            Você sabia?
+        </h3>
+
+        <p>
+            Redes neurais artificiais foram inspiradas,
+            de forma simplificada, na maneira como
+            neurônios biológicos se conectam e transmitem
+            sinais.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     NEWSLETTER
+===================================================== -->
+
+<section class="section">
+
+    <div class="newsletter">
+
+        <div class="section-label">
+            04 // CONNECTION
+        </div>
+
+        <h2>
+            Entre no Nexus.
+        </h2>
+
+        <p>
+            Receba novas transmissões diretamente
+            no seu terminal.
+        </p>
+
+        <form
+            class="newsletter-form"
+            id="newsletterForm"
+        >
+
+            <input
+                type="email"
+                id="email"
+                placeholder="seu@email.com"
+                required
+            >
+
+            <button type="submit">
+                CONECTAR
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SOBRE
+===================================================== -->
+
+<section
+    class="section"
+    id="sobre"
+>
+
+    <div class="section-label">
+        05 // ABOUT
+    </div>
+
+    <div class="section-title">
+        O Nexus.
+    </div>
+
+
+    <div class="about">
+
+        <p>
+            NEXUS.AI é um projeto experimental
+            criado para explorar uma ideia:
+            e se um portal de notícias pudesse
+            parecer menos com um site e mais
+            com um ambiente?
+        </p>
+
+        <p>
+            A interface mistura jornalismo,
+            inteligência artificial, espaço,
+            sistemas neurais e interação
+            para criar uma experiência digital
+            diferente.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <span>
+        NEXUS.AI © 2026
+    </span>
+
+    <span>
+        PORTAL FICTÍCIO // PROJETO DE ESTUDO
+    </span>
+
+</footer>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="modal"
+>
+
+    <div class="modal-box">
+
+        <button
+            class="modal-close"
+            id="modalClose"
+        >
+            ×
+        </button>
+
+        <span
+            class="tag"
+            id="modalTag"
+        >
+            NEXUS
+        </span>
+
+        <h2 id="modalTitle">
+            Título
+        </h2>
+
+        <p id="modalText">
+            Texto.
+        </p>
+
+        <p>
+            Este conteúdo faz parte da experiência
+            experimental do NEXUS.AI.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   SISTEMA NEURAL
+========================================================= */
+
+const canvas =
+    document.getElementById("neuralCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+let width;
+let height;
+
+let particles = [];
+
+const mouse = {
+
+    x: window.innerWidth / 2,
+
+    y: window.innerHeight / 2,
+
+    active: false
+
+};
+
+
+/* ---------------------------------------------------------
+   RESIZE
+--------------------------------------------------------- */
+
+function resizeCanvas() {
+
+    width = canvas.width =
+        window.innerWidth *
+        window.devicePixelRatio;
+
+    height = canvas.height =
+        window.innerHeight *
+        window.devicePixelRatio;
+
+    canvas.style.width =
+        window.innerWidth + "px";
+
+    canvas.style.height =
+        window.innerHeight + "px";
+
+    ctx.setTransform(
+        window.devicePixelRatio,
+        0,
+        0,
+        window.devicePixelRatio,
+        0,
+        0
+    );
+}
+
+
+/* ---------------------------------------------------------
+   NÚMERO DE NEURÔNIOS
+--------------------------------------------------------- */
+
+function particleCount() {
+
+    return window.innerWidth < 700
+        ? 55
+        : 105;
+
+}
+
+
+/* ---------------------------------------------------------
+   CRIAR NEURÔNIOS
+--------------------------------------------------------- */
+
+function createParticles() {
+
+    particles = [];
+
+    const total =
+        particleCount();
+
+    for (
+        let i = 0;
+        i < total;
+        i++
+    ) {
+
+        particles.push({
+
+            x:
+                Math.random() *
+                window.innerWidth,
+
+            y:
+                Math.random() *
+                window.innerHeight,
+
+            vx:
+                (Math.random() - 0.5)
+                * 0.18,
+
+            vy:
+                (Math.random() - 0.5)
+                * 0.18,
+
+            radius:
+                Math.random() * 1.7 + 0.6,
+
+            pulse:
+                Math.random() *
+                Math.PI *
+                2,
+
+            pulseSpeed:
+                Math.random() *
+                0.02 +
+                0.008
+
+        });
+
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   MOVIMENTO DO MOUSE
+--------------------------------------------------------- */
+
+window.addEventListener(
+    "mousemove",
+    event => {
+
+        mouse.x =
+            event.clientX;
+
+        mouse.y =
+            event.clientY;
+
+        mouse.active = true;
+
+
+        document.documentElement
+            .style
+            .setProperty(
+                "--mouse-x",
+                event.clientX + "px"
+            );
+
+        document.documentElement
+            .style
+            .setProperty(
+                "--mouse-y",
+                event.clientY + "px"
+            );
+
+
+        const centerX =
+            window.innerWidth / 2;
+
+        const centerY =
+            window.innerHeight / 2;
+
+
+        const depthX =
+            (event.clientX - centerX)
+            * 0.035;
+
+        const depthY =
+            (event.clientY - centerY)
+            * 0.035;
+
+
+        document.documentElement
+            .style
+            .setProperty(
+                "--depth-x",
+                depthX + "px"
+            );
+
+        document.documentElement
+            .style
+            .setProperty(
+                "--depth-y",
+                depthY + "px"
+            );
+
+    }
+);
+
+
+/* ---------------------------------------------------------
+   DESENHAR SISTEMA
+--------------------------------------------------------- */
+
+function drawNeuralNetwork() {
+
+    ctx.clearRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight
+    );
+
+
+    /* ===============================
+       MOVIMENTO
+    =============================== */
+
+    particles.forEach(p => {
+
+        p.x += p.vx;
+
+        p.y += p.vy;
+
+        p.pulse +=
+            p.pulseSpeed;
+
+
+        /* --------------------------------
+           LIMITES
+        -------------------------------- */
+
+        if (
+            p.x < -50
+            ||
+            p.x >
+                window.innerWidth + 50
+        ) {
+
+            p.vx *= -1;
+
+        }
+
+        if (
+            p.y < -50
+            ||
+            p.y >
+                window.innerHeight + 50
+        ) {
+
+            p.vy *= -1;
+
+        }
+
+
+        /* --------------------------------
+           INTERAÇÃO COM MOUSE
+        -------------------------------- */
+
+        const dx =
+            mouse.x - p.x;
+
+        const dy =
+            mouse.y - p.y;
+
+        const distance =
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
+
+        const influence =
+            180;
+
+
+        if (
+            mouse.active &&
+            distance < influence
+        ) {
+
+            const force =
+                (influence - distance)
+                / influence;
+
+
+            /*
+               Pequeno empurrão
+               para criar uma onda.
+            */
+
+            p.vx -=
+                (dx / distance)
+                * force
+                * 0.018;
+
+            p.vy -=
+                (dy / distance)
+                * force
+                * 0.018;
+
+
+            /*
+               Limitador para evitar
+               velocidade exagerada.
+            */
+
+            const maxSpeed = 0.55;
+
+
+            p.vx =
+                Math.max(
+                    -maxSpeed,
+                    Math.min(
+                        maxSpeed,
+                        p.vx
+                    )
+                );
+
+            p.vy =
+                Math.max(
+                    -maxSpeed,
+                    Math.min(
+                        maxSpeed,
+                        p.vy
+                    )
+                );
+
+        }
+
+
+        /*
+           Retorno gradual à velocidade normal
+        */
+
+        p.vx *= 0.999;
+
+        p.vy *= 0.999;
+
+
+    });
+
+
+    /* ===============================
+       CONEXÕES
+    =============================== */
+
+    for (
+        let i = 0;
+        i < particles.length;
+        i++
+    ) {
+
+        const a =
+            particles[i];
+
+
+        for (
+            let j = i + 1;
+            j < particles.length;
+            j++
+        ) {
+
+            const b =
+                particles[j];
+
+
+            const dx =
+                a.x - b.x;
+
+            const dy =
+                a.y - b.y;
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
+
+            const connectionDistance =
+                145;
+
+
+            if (
+                distance <
+                connectionDistance
+            ) {
+
+                let alpha =
+                    1 -
+                    (
+                        distance /
+                        connectionDistance
+                    );
+
+
+                /*
+                   O mouse aumenta a atividade
+                   da rede.
+                */
+
+                const mouseDistanceA =
+                    Math.hypot(
+                        mouse.x - a.x,
+                        mouse.y - a.y
+                    );
+
+                const mouseDistanceB =
+                    Math.hypot(
+                        mouse.x - b.x,
+                        mouse.y - b.y
+                    );
+
+
+                const mouseInfluence =
+                    Math.max(
+                        0,
+                        1 -
+                        (
+                            Math.min(
+                                mouseDistanceA,
+                                mouseDistanceB
+                            )
+                            / 220
+                        )
+                    );
+
+
+                alpha *=
+                    0.12 +
+                    mouseInfluence *
+                    0.65;
+
+
+                /*
+                   Pequena variação orgânica
+                */
+
+                alpha *=
+                    0.8 +
+                    Math.sin(
+                        a.pulse
+                    ) *
+                    0.15;
+
+
+                ctx.beginPath();
+
+                ctx.moveTo(
+                    a.x,
+                    a.y
+                );
+
+                ctx.lineTo(
+                    b.x,
+                    b.y
+                );
+
+
+                ctx.strokeStyle =
+                    `rgba(
+                        45,
+                        212,
+                        238,
+                        ${alpha}
+                    )`;
+
+                ctx.lineWidth =
+                    0.65 +
+                    mouseInfluence *
+                    0.7;
+
+
+                ctx.stroke();
+
+            }
+
+        }
+
+    }
+
+
+    /* ===============================
+       NEURÔNIOS
+    =============================== */
+
+    particles.forEach(p => {
+
+        const mouseDistance =
+            Math.hypot(
+                mouse.x - p.x,
+                mouse.y - p.y
+            );
+
+
+        const influence =
+            Math.max(
+                0,
+                1 -
+                mouseDistance / 180
+            );
+
+
+        const pulse =
+            Math.sin(
+                p.pulse
+            ) * 0.35;
+
+
+        const radius =
+            p.radius +
+            influence * 2 +
+            pulse;
+
+
+        /* Glow */
+
+        if (influence > 0.05) {
+
+            ctx.beginPath();
+
+            ctx.arc(
+                p.x,
+                p.y,
+                radius * 4,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle =
+                `rgba(
+                    45,
+                    212,
+                    238,
+                    ${0.025 + influence * 0.08}
+                )`;
+
+            ctx.fill();
+
+        }
+
+
+        /* Núcleo */
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            Math.max(
+                0.4,
+                radius
+            ),
+            0,
+            Math.PI * 2
+        );
+
+
+        ctx.fillStyle =
+            `rgba(
+                130,
+                235,
+                255,
+                ${0.25 + influence * 0.75}
+            )`;
+
+        ctx.fill();
+
+    });
+
+
+    requestAnimationFrame(
+        drawNeuralNetwork
+    );
+
+}
+
+
+/* =========================================================
+   SCROLL DEPTH
+========================================================= */
+
+window.addEventListener(
+    "scroll",
+    () => {
+
+        document.documentElement
+            .style
+            .setProperty(
+                "--scroll-depth",
+                window.scrollY
+            );
+
+    }
+);
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+const cards =
+    document.querySelectorAll(".card");
+
+cards.forEach(card => {
+
+    card.addEventListener(
+        "mousemove",
+        event => {
+
+            const rect =
+                card.getBoundingClientRect();
+
+            const x =
+                event.clientX -
+                rect.left;
+
+            const y =
+                event.clientY -
+                rect.top;
+
+
+            const rotateY =
+                (
+                    x -
+                    rect.width / 2
+                ) /
+                30;
+
+
+            const rotateX =
+                -(
+                    y -
+                    rect.height / 2
+                ) /
+                30;
+
+
+            card.style.transform =
+                `
+                perspective(800px)
+                rotateX(${rotateX}deg)
+                rotateY(${rotateY}deg)
+                translateY(-8px)
+                `;
+
+        }
+    );
+
+
+    card.addEventListener(
+        "mouseleave",
+        () => {
+
+            card.style.transform =
+                "";
+
+        }
+    );
+
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            openModal(card);
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+const modal =
+    document.getElementById("modal");
+
+const modalTitle =
+    document.getElementById("modalTitle");
+
+const modalText =
+    document.getElementById("modalText");
+
+const modalClose =
+    document.getElementById("modalClose");
+
+
+function openModal(card) {
+
+    modalTitle.textContent =
+        card.dataset.title;
+
+    modalText.textContent =
+        card.dataset.text;
+
+    modal.classList.add(
+        "open"
+    );
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+function closeModal() {
+
+    modal.classList.remove(
+        "open"
+    );
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+modalClose.addEventListener(
+    "click",
+    closeModal
+);
+
+
+modal.addEventListener(
+    "click",
+    event => {
+
+        if (
+            event.target === modal
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CATEGORIAS
+========================================================= */
+
+document
+    .querySelectorAll(".category")
+    .forEach(category => {
+
+        category.addEventListener(
+            "click",
+            () => {
+
+                document
+                    .querySelectorAll(
+                        ".category"
+                    )
+                    .forEach(item => {
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                category.classList.add(
+                    "active"
+                );
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   NEWSLETTER
+========================================================= */
+
+document
+    .getElementById(
+        "newsletterForm"
+    )
+    .addEventListener(
+        "submit",
+        event => {
+
+            event.preventDefault();
+
+            const email =
+                document.getElementById(
+                    "email"
+                ).value;
+
+
+            alert(
+                `Conexão simulada estabelecida para ${email}`
+            );
+
+            event.target.reset();
+
+        }
+    );
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+resizeCanvas();
+
+createParticles();
+
+drawNeuralNetwork();
+
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        resizeCanvas();
+
+        createParticles();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
