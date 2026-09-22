@@ -1,0 +1,63 @@
+/* ---------- FUNDO CAMUFLADO REATIVO AO MOUSE ---------- */
+
+.chameleon-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 20% 30%,
+            rgba(45,212,238,0.22),
+            transparent 18%
+        ),
+        radial-gradient(
+            circle at 75% 65%,
+            rgba(176,125,250,0.24),
+            transparent 22%
+        ),
+        radial-gradient(
+            circle at 50% 90%,
+            rgba(255,107,157,0.18),
+            transparent 20%
+        ),
+        conic-gradient(
+            from 180deg at 50% 50%,
+            rgba(45,212,238,0.12),
+            rgba(176,125,250,0.12),
+            rgba(255,107,157,0.10),
+            rgba(45,212,238,0.12)
+        );
+
+    opacity: 0;
+
+    -webkit-mask-image: radial-gradient(
+        circle 230px at var(--chameleon-x, 50%) var(--chameleon-y, 50%),
+        black 0%,
+        rgba(0,0,0,0.85) 35%,
+        rgba(0,0,0,0.35) 65%,
+        transparent 100%
+    );
+
+    mask-image: radial-gradient(
+        circle 230px at var(--chameleon-x, 50%) var(--chameleon-y, 50%),
+        black 0%,
+        rgba(0,0,0,0.85) 35%,
+        rgba(0,0,0,0.35) 65%,
+        transparent 100%
+    );
+
+    transition: opacity 0.4s ease;
+    filter: blur(8px);
+}
+
+body.chameleon-active .chameleon-layer {
+    opacity: 1;
+}
+
+@media (max-width: 700px) {
+    .chameleon-layer {
+        display: none;
+    }
+}
